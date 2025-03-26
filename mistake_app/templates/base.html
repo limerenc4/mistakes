@@ -1,0 +1,57 @@
+<!-- templates/base.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}智能错题本{% endblock %}</title>
+    
+    <!-- 公共样式 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- 自定义样式 -->
+    <style>
+        .wrong-answer { color: #dc3545; font-weight: 500; }
+        .right-answer { color: #198754; font-weight: 500; }
+        .subject-badge { font-size: 0.9em; padding: 0.4em 0.8em; }
+        .card-hover { transition: transform 0.2s; }
+        .card-hover:hover { transform: translateY(-3px); }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4 shadow">
+        <div class="container">
+            <a class="navbar-brand" href="/">📚 智能错题本</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/add"><i class="bi bi-plus-circle me-1"></i>添加错题</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/list"><i class="bi bi-list-task me-1"></i>错题列表</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'export_page' %}">
+                            <i class="bi bi-download"></i> 数据导出
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- 公共脚本 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!-- templates/list.html -->
+{% extends "base.html" %}
+
+{% block title %}错题列表 - 智能错题本{% endblock %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-journal-text"></i> 全部错题（共{{ page_obj.paginator.count }}条）</h5>
+        <a href="/add" class="btn btn-sm btn-primary">
+            <i class="bi bi-plus-lg"></i> 新增
+        </a>
+    </div>
+    
+    <div class="card-body">
+        {% if not mistakes %}
+        <div class="alert alert-warning">暂时没有错题记录，快去添加吧！</div>
+        {% endif %}
+
+        {% for mistake in page_obj.object_list %}
+        <div class="mb-4 p-3 border rounded">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <span class="badge subject-badge bg-info">{{ mistake.get_subject_display }}</span>
+                    <span class="ms-2 text-muted small">错误次数：{{ mistake.error_count }}</span>
+                </div>
+                <small class="text-muted">{{ mistake.add_date|date:"Y-m-d H:i" }}</small>
+            </div>
+            <div class="mt-2">
+                <p class="mb-2"><strong>题目：</strong>{{ mistake.question }}</p>
+                <p class="wrong-answer mb-1">❌ 错误答案：{{ mistake.wrong_answer }}</p>
+                <p class="right-answer mb-0">✅ 正确答案：{{ mistake.right_answer }}</p>
+            </div>
+        </div>
+        {% endfor %}
+        <!-- 分页导航 -->
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">上一页</a>
+                </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">下一页</a>
+                </li>
+                {% endif %}
+                {% if mistake.question_image %}
+                <div class="mt-2">
+                    <img src="{{ mistake.question_image.url }}" 
+                        alt="题目图片"
+                        class="img-thumbnail"
+                        style="max-width: 300px;">
+                </div>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endblock %}

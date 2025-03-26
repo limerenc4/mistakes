@@ -1,0 +1,88 @@
+<!-- templates/home.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}首页 - 智能错题本{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+    <!-- 统计卡片 -->
+    <div class="col-md-4">
+        <div class="card card-hover h-100 shadow">
+            <div class="card-body text-center">
+                <h5 class="card-title"><i class="bi bi-cloud-arrow-up"></i> 新增错题</h5>
+                <a href="/add" class="btn btn-primary mt-3">立即添加</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 统计图表 -->
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-pie-chart"></i> 科目分布</h5>
+            </div>
+            <div class="card-body">
+                <div style="position: relative; height: 400px;">
+                    <canvas id="subjectChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 最近错题 -->
+<div class="card shadow">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="bi bi-clock-history"></i> 最近错题</h5>
+    </div>
+    <div class="card-body">
+        {% for mistake in latest_mistakes %}
+        <div class="mb-3 p-3 border-bottom">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <span class="badge subject-badge bg-info">{{ mistake.get_subject_display }}</span>
+                    <span class="ms-2">{{ mistake.question|truncatechars:40 }}</span>
+                </div>
+                <small class="text-muted">{{ mistake.add_date|date:"Y-m-d" }}</small>
+            </div>
+            <div class="mt-2">
+                <span class="wrong-answer">❌ {{ mistake.wrong_answer }}</span> →
+                <span class="right-answer">✅ {{ mistake.right_answer }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<!-- 图表功能 -->
+<script src="https://cdn.bootcdn.net/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const statsData = {{ stats_json|safe }};
+    const ctx = document.getElementById('subjectChart');
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: statsData.map(item => item.name),
+            datasets: [{
+                data: statsData.map(item => item.count),
+                backgroundColor: statsData.map(item => item.color),
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'right' }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
